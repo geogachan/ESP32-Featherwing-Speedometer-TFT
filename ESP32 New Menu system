@@ -1,0 +1,133 @@
+#include <SPI.h>
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_HX8357.h>
+#include <Adafruit_STMPE610.h>
+
+#ifdef defined(ESP32) && !defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2)
+   #define STMPE_CS 32
+   #define TFT_CS   15
+   #define TFT_DC   33
+   #define SD_CS    14
+#else
+    // Anything else, defaults!
+   #define STMPE_CS 6
+   #define TFT_CS   9
+   #define TFT_DC   10
+   #define SD_CS    5
+#endif
+#define TFT_RST -1
+Adafruit_HX8357 tft = Adafruit_HX8357(TFT_CS, TFT_DC, TFT_RST);
+Adafruit_STMPE610 ts = Adafruit_STMPE610(STMPE_CS);
+
+
+#define TS_MINX 38000
+#define TS_MAXX 1000
+#define TS_MINY 1000
+#define TS_MAXY 37500
+
+void setup() {
+  Serial.begin(115200);
+
+
+
+  if (!ts.begin()) {
+    Serial.println("Couldn't start touchscreen controller");
+    while (1);
+  }
+  Serial.println("Touchscreen started");
+ 
+  tft.begin();
+  tft.fillScreen(HX8357_BLACK);
+
+   tft.fillRoundRect(170, 300, 140, 110, 5, HX8357_RED);
+            tft.fillRoundRect(10, 300, 140, 110, 5, HX8357_RED);
+            
+tft.setCursor(30, 350);
+  tft.setTextSize(5);
+tft.println("RST  ");
+  
+tft.setCursor(190, 350);
+  tft.setTextSize(5);
+ tft.println("GPS  ");
+
+ 
+}
+
+
+void(* resetFunc) (void) = 0;
+
+void Alinda(){
+tft.fillScreen(HX8357_BLUE);
+  tft.setCursor(80, 100);
+  tft.setTextSize(5);
+
+  tft.println("GPS  ");
+
+
+ tft.fillRoundRect(170, 300, 140, 110, 5, HX8357_RED);
+            tft.fillRoundRect(10, 300, 140, 110, 5, HX8357_RED);
+            
+tft.setCursor(30, 350);
+  tft.setTextSize(5);
+tft.println("RST  ");
+  
+tft.setCursor(190, 350);
+  tft.setTextSize(5);
+ tft.println("GPS  ");
+
+  
+}
+
+void loop(void) {
+  // Retrieve a point  
+  TS_Point p = ts.getPoint();
+ 
+   p.x = map(p.x, TS_MINX, TS_MAXX, tft.width(), 0);
+  p.y = map(p.y, TS_MINY, TS_MAXY, 0, tft.height());
+     
+ 
+
+
+
+int var =0;
+
+  if (ts.touched()){
+
+Serial.print("X = "); Serial.println(p.x); Serial.print("\tY = "); Serial.println(p.y);
+
+  if (p.y > 20){
+
+
+switch (p.x) {
+  case 10:
+    case 9:
+  case 8:
+  case 7:
+  case 6:
+  case 5:
+  case 4:
+  case 3:
+  case 2:
+  case 1:
+resetFunc();
+    break;
+  case 11:
+   case 12:
+  case 13:
+  case 14:
+  case 15:
+  case 16:
+  case 17:
+  case 18:
+  case 19:
+  case 20:
+Alinda();
+break;
+  default:
+  tft.fillScreen(HX8357_BLACK);
+
+    break;
+}
+}
+}
+}
